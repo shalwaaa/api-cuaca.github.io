@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Weather</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/120205b294.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <i class="fa-solid fa-location-dot"></i>
+            <input type="text" placeholder="Enter your location">
+            <button class="fa-solid fa-magnifying-glass"></button>
+        </div>
+
+        <div class="weather-box">
+            <div class="box">
+                <div class="info-weather">
+                    <div class="weather">
+                        <img src="image/cloud.png" alt="Weather Icon">
+                        <p class="temperature">16 <span>°C</span></p>
+                        <div class="description">Broken Clouds</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="weather-details">
+            <div class="humidity">
+                <i class="fa-solid fa-water"></i>
+                <div class="text">
+                    <div class="info-humidity">
+                        <span>0%</span>
+                    </div>
+                    <p>Humidity</p>
+                </div>
+            </div>
+
+            <div class="wind">
+                <i class="fa-solid fa-wind"></i>
+                <div class="text">
+                    <div class="info-wind">
+                        <span>0Km/h</span>
+                    </div>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+const container = document.querySelector('.container');
+const search = document.querySelector('.search-box button');
+const weatherBox = document.querySelector('.weather-box');
+const weatherDetails = document.querySelector('.weather-details');
+
+search.addEventListener('click', () => {
+    const APIKey = '4c8d001ba44a1ee038b6f1ca0cb46d6d';
+    const city = document.querySelector('.search-box input').value;
+
+    if (city === '') {
+        alert('Please enter a city name');
+        return;
+    }
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${APIKey}`)
+        .then(response => response.json())
+        .then(json => {
+            if (json.cod === "404") {
+                alert('City not found');
+                return;
+            }
+
+            const image = document.querySelector('.weather-box img');
+            const temperature = document.querySelector('.weather-box .temperature');
+            const description = document.querySelector('.weather-box .description');
+            const humidity = document.querySelector('.weather-details .humidity span');
+            const wind = document.querySelector('.weather-details .wind span');
+
+            switch (json.weather[0].main) {
+                case 'Clear':
+                    image.src = 'image/clear.png';
+                    break;
+
+                case 'Rain':
+                    image.src = 'image/rain.png';
+                    break;
+
+                case 'Snow':
+                    image.src = 'image/snow.png';
+                    break;
+
+                case 'Clouds':
+                    image.src = 'image/cloud.png';
+                    break;
+
+                case 'Haze':
+                    image.src = 'image/mist.png';
+                    break;
+
+                default:
+                    image.src = 'image/cloud.png';
+            }
+
+            temperature.innerHTML = `${parseInt(json.main.temp)}<span>°C</span>`;
+            description.innerHTML = `${json.weather[0].description}`;
+            humidity.innerHTML = `${json.main.humidity}%`;
+            wind.innerHTML = `${parseInt(json.wind.speed)}Km/h`;
+
+            weatherBox.style.display = '';
+            weatherDetails.style.display = '';
+        });
+});
+</script>
+</body>
+</html>
